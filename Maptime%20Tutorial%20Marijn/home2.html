@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="nl">
+<html>
+    <head>
+                                            
+        <meta charset="utf-8">
+        <title>Marijns eerste kaart met Leaflet</title>  
+        
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.css" />
+
+        <link rel="stylesheet" href= "style/main.css" />
+
+    </head>
+    
+    <body>
+        
+         
+        <H1>Marijns eerste kaart met Leaflet</H1>
+        <H2>20161003 verder gebouwd in local server (FenixWebServer)</H2>
+        <div id="map"></div>
+
+              <script src="https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.js"></script>
+ 
+        <script>
+        //initialize the map         
+        var map = L.map('map').setView([45.588422, 9.174924], 9);
+
+        //maak een baselayer - tegels         
+        var achtergrondkaart = L.tileLayer('http://tile.stamen.com/toner/{z}/{x}/{y}.png',
+            {
+            attribution: '<a href="http://openstreetmap.org">OpenStreetMap</a>contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+            maxZoom: 19
+            }
+        );
+
+        achtergrondkaart.addTo(map);
+            
+            var BosmaGrafiek = L.marker([51.8209789, 5.8429084]).addTo(map);
+            var popup = "BosmaGrafiek";
+BosmaGrafiek.bindPopup(popup);    
+            
+            var bakker = L.marker([51.82476783, 5.84911197]).addTo(map);
+            var popup = "Bakkerij De Korenschoof";
+bakker.bindPopup(popup); 
+            
+            var fietsenmaker = L.marker([51.83095096, 5.8508715]).addTo(map);
+            var popup = "fietsenmaker";
+fietsenmaker.bindPopup(popup);  
+         
+            var Goffertstadion = L.marker([51.82243029, 5.83717883]).addTo(map);
+            var popup = "Goffertstadion";
+Goffertstadion.bindPopup(popup);  
+       
+        
+            
+            
+             //voeg een circle toe  
+            var circle = L.circle([51.8209789, 5.8429084], 500, {
+        color: '#2a8015',
+        fillColor: '#2a8015',
+        fillOpacity: 0.5
+    }).addTo(map);
+            
+            
+//voeg een willekeurige polygoon toe     
+var polygon = L.polygon([
+    [51.8209789, 5.8429084],
+    [51.82476783, 5.84911197],
+    [51.83095096, 5.8508715], 
+    [51.82243029, 5.83717883],
+]).addTo(map); 
+            
+            
+//geojson zonder jQuery met xhr definieer eerst de icon
+
+        var vdIcon = L.icon({
+            iconUrl: "images/vd.png",
+            iconSize: [20,20]
+        });
+//maak vervolgens een geojson laag
+
+       var geojson = L.geoJson(null,{
+            pointToLayer: function(feature,latlng){
+                return L.marker(latlng, {icon: vdIcon});
+            }
+        }).addTo(map);           
+
+//daarna stop je de daadwerkelijke geojson hierin
+
+    var xhr = new XMLHttpRequest();
+        xhr.open('GET', encodeURI("js/E1.geojson"));
+        xhr.onload = function() {
+        if (xhr.status === 200) {
+        geojson.addData(JSON.parse(xhr.responseText));
+    } else {
+        alert('Request failed.  Returned status of ' + xhr.status);
+    }
+    };
+    xhr.send(); 
+            
+        
+        xhr.open('GET', encodeURI("js/Skeelerroute.geojson"));
+        xhr.onload = function() {
+        if (xhr.status === 200) {
+        geojson.addData(JSON.parse(xhr.responseText));
+    } else {
+        alert('Request failed.  Returned status of ' + xhr.status);
+    }
+    };
+    xhr.send();
+            
+            
+    </script>      
+        
+        </body>
+    
+    </html>
